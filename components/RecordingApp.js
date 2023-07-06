@@ -1,6 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
+import * as FileSystem from "expo-file-system";
 import React, { useState } from "react";
+import extractFeature from "./MachineLearning/FeatureExtraction";
+
+// internal imports
 import {
   Button,
   StyleSheet,
@@ -10,9 +14,26 @@ import {
   View,
 } from "react-native";
 
+const convertToWav = async (sourceUri) => {
+  try {
+    const destinationUri = FileSystem.cacheDirectory + "audio.wav";
+
+    await FileSystem.copyAsync({
+      from: sourceUri,
+      to: destinationUri,
+    });
+
+    return destinationUri;
+  } catch (error) {
+    console.log("Error converting audio:", error);
+    return null;
+  }
+};
+
 const RecordingApp = () => {
   const [recording, setRecording] = useState(null);
   const [recordingUri, setRecordingUri] = useState(null);
+  const [isRecordPlaying, setIsRecordPlaying] = useState(false);
 
   const startRecording = async () => {
     try {
@@ -43,6 +64,10 @@ const RecordingApp = () => {
       setRecording(null);
       console.log("Recording stopped. URI:", uri);
       ToastAndroid.show("Recording stopped.", 1000);
+      const wavUri = await convertToWav(uri);
+      if (wavUri) {
+        extractFeature(wavUri, true, true, true, true);
+      }
     } catch (error) {
       console.log("Error stopping recording:", error);
     }
@@ -50,9 +75,14 @@ const RecordingApp = () => {
 
   const playAudio = async () => {
     try {
+      setIsRecordPlaying(true);
       const soundObject = new Audio.Sound();
       await soundObject.loadAsync({ uri: recordingUri });
-      await soundObject.playAsync();
+      const { playableDurationMillis } = await soundObject.playAsync();
+
+      setTimeout(() => {
+        setIsRecordPlaying(false);
+      }, playableDurationMillis);
     } catch (error) {
       console.log("Error playing audio:", error);
     }
@@ -74,7 +104,7 @@ const RecordingApp = () => {
       <Button
         title="Play Audio"
         onPress={playAudio}
-        disabled={recording || !recordingUri ? true : false}
+        disabled={recording || !recordingUri || isRecordPlaying ? true : false}
       />
     </View>
   );
