@@ -1,6 +1,8 @@
 import librosa
 import numpy as np
 import soundfile
+from scipy import stats
+from sklearn.preprocessing import normalize
 
 
 def extract_feature(file_name, mfcc, chroma, mel, tonnetz):
@@ -44,5 +46,13 @@ def extract_feature(file_name, mfcc, chroma, mel, tonnetz):
 if __name__ == "__main__":
     import sys
     file_path = sys.argv[1]
-    result = extract_feature(file_path, True, True, True, True)
-    print(result)
+    result = extract_feature(file_path, True, True, True, False)
+    data = np.array(result)
+
+    # Reshape X_train and X_test
+    data = data.reshape(data.shape[0], -1)
+    # Apply z-score normalization
+    data = stats.zscore(data)
+    print(data.min(), data.max())
+
+    print(data)

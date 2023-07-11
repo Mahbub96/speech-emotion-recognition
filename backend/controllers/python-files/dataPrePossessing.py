@@ -1,4 +1,3 @@
-from sklearn.preprocessing import LabelEncoder, normalize
 
 emotions = {
 

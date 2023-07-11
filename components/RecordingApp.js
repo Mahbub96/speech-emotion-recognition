@@ -4,6 +4,7 @@ import * as FileSystem from "expo-file-system";
 import React, { useState } from "react";
 
 // internal imports
+import axios from "axios";
 import {
   Button,
   StyleSheet,
@@ -81,23 +82,18 @@ const RecordingApp = () => {
       await soundObject.loadAsync({ uri: recordingUri });
       const { playableDurationMillis } = await soundObject.playAsync();
 
-      const response = await fetch(
-        "https://localhost:3050/api/v1/machine-learning/feature-extraction",
-        {
-          method: "POST",
-          body: recordingUri,
-        }
+      const response = await axios.post(
+        "http://192.168.0.107:3050/api/v1/machine-learning/feature-extraction",
+        {}
       );
 
-      const data = await response.json();
-
-      console.log(data);
+      console.log(response.data);
 
       setTimeout(() => {
         setIsRecordPlaying(false);
       }, playableDurationMillis);
     } catch (error) {
-      console.log("Error playing audio:", error);
+      console.log("Error playing audio:", error?.response?.data);
     }
   };
 

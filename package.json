@@ -15,6 +15,7 @@
     "@react-native-community/audio-toolkit": "^2.0.3",
     "@tensorflow/tfjs": "^4.8.0",
     "@tensorflow/tfjs-react-native": "^0.8.0",
+    "axios": "^1.4.0",
     "eas-cli": "^3.15.0",
     "expo": "~48.0.18",
     "expo-asset": "~8.9.1",
