@@ -2,7 +2,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
 import React, { useState } from "react";
-import extractFeature from "./MachineLearning/FeatureExtraction";
 
 // internal imports
 import {
@@ -13,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Timer from "./Timer";
 
 const convertToWav = async (sourceUri) => {
   try {
@@ -62,11 +62,12 @@ const RecordingApp = () => {
       const uri = recording.getURI();
       setRecordingUri(uri);
       setRecording(null);
-      console.log("Recording stopped. URI:", uri);
+      // console.log("Recording stopped. URI:", uri);
       ToastAndroid.show("Recording stopped.", 1000);
       const wavUri = await convertToWav(uri);
       if (wavUri) {
-        extractFeature(wavUri, true, true, true, true);
+        // extractFeature(wavUri, true, true, true, true);
+        console.log("converted form of wavuri", wavUri);
       }
     } catch (error) {
       console.log("Error stopping recording:", error);
@@ -80,6 +81,18 @@ const RecordingApp = () => {
       await soundObject.loadAsync({ uri: recordingUri });
       const { playableDurationMillis } = await soundObject.playAsync();
 
+      const response = await fetch(
+        "https://localhost:3050/api/v1/machine-learning/feature-extraction",
+        {
+          method: "POST",
+          body: recordingUri,
+        }
+      );
+
+      const data = await response.json();
+
+      console.log(data);
+
       setTimeout(() => {
         setIsRecordPlaying(false);
       }, playableDurationMillis);
@@ -90,6 +103,7 @@ const RecordingApp = () => {
 
   return (
     <View>
+      <Timer startTimer={recording ? true : false} />
       <TouchableOpacity
         style={styles.button}
         onPress={recording ? stopRecording : startRecording}
