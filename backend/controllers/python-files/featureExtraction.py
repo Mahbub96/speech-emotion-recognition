@@ -1,13 +1,23 @@
+import os
+
+import global_model_loader
 import librosa
 import numpy as np
 import soundfile
-from scipy import stats
+from keras.models import load_model
+from pydub import AudioSegment
 from sklearn.preprocessing import normalize
 
 
 def extract_feature(file_name, mfcc, chroma, mel, tonnetz):
-    fixed_length = 1000
+
     try:
+
+        # converting stereo audio to mono
+        sound = AudioSegment.from_wav(file_name)
+        sound = sound.set_channels(1)
+        sound.export(file_name, format="wav")
+
         with soundfile.SoundFile(file_name) as sound_file:
             X = sound_file.read(dtype="float32")
             sample_rate = sound_file.samplerate
@@ -55,8 +65,7 @@ def data_post_processing(data):
     s_sample_reshaped = np.expand_dims(
         s_sample, axis=0)  # Add a batch dimension
     s_sample_reshaped = normalize(s_sample_reshaped, axis=1, norm='l1')
-    print(s_sample_reshaped.min())
-    print(s_sample_reshaped.max())
+
     return s_sample_reshaped
 
 
@@ -67,4 +76,15 @@ if __name__ == "__main__":
 
     s_sample_reshaped = data_post_processing(result)
 
-    print(s_sample_reshaped)
+    # print(s_sample_reshaped)
+    # Make the prediction
+
+    emotion_predictions = global_model_loader.model.predict(s_sample_reshaped)
+
+    # Convert the array output to the corresponding emotion label
+    predicted_emotion_index = np.argmax(emotion_predictions)
+    emotion_labels = ['happy', 'sad', 'angry',
+                      'surprised', 'neutral', 'disgust', 'fear']
+    predicted_emotion_label = emotion_labels[predicted_emotion_index]
+
+    print(predicted_emotion_label)
