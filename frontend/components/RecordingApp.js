@@ -15,6 +15,16 @@ const RecordingApp = () => {
   const [emotion, setEmotion] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const emojis = {
+    Happy: "\u{1F60A}", // 😊
+    Sad: "\u{1F622}", // 😢
+    Angry: "\u{1F621}", // 😡
+    Surprised: "\u{1F632}", // 😲
+    Neutral: "\u{1F610}", // 😐
+    Disgust: "\u{1F922}", // 🤢
+    Fear: "\u{1F628}", // 😨
+  };
+
   const startRecording = async () => {
     try {
       const { status } = await Audio.requestPermissionsAsync();
@@ -123,11 +133,16 @@ const RecordingApp = () => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       {emotion ? (
-        <Text style={styles.emotion}>Your Emotion is : {emotion}</Text>
+        <View style={styles.emotionView}>
+          <Text style={styles.emoji}>{emojis[emotion]}</Text>
+          <Text style={styles.emotion}>Your Emotion is : {emotion}</Text>
+        </View>
       ) : loading ? (
-        <Text style={styles.emotion}>Finding Emotion...</Text>
+        <View style={styles.emotionView}>
+          <Text style={styles.emotion}>Finding Emotion...</Text>
+        </View>
       ) : (
         <Text></Text>
       )}
@@ -135,6 +150,7 @@ const RecordingApp = () => {
       <TouchableOpacity
         style={styles.button}
         onPress={recording ? stopRecording : startRecording}
+        disabled={loading}
       >
         <Ionicons
           name={recording ? "stop-circle" : "mic-circle"}
@@ -143,11 +159,16 @@ const RecordingApp = () => {
         />
         <Text>{recording ? "Stop Recording" : "Start Recording"}</Text>
       </TouchableOpacity>
-      <Button
-        title="Play Audio"
-        onPress={playAudio}
-        disabled={recording || !recordingUri || isRecordPlaying ? true : false}
-      />
+
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Play Audio"
+          onPress={playAudio}
+          disabled={
+            recording || !recordingUri || isRecordPlaying ? true : false
+          }
+        />
+      </View>
     </View>
   );
 };
@@ -160,16 +181,32 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+
   button: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20,
+    marginBottom: 30,
   },
-  emotion: {
-    fontSize: 20,
+
+  buttonContainer: {
+    width: "80%",
+    alignSelf: "center",
+  },
+
+  emotionView: {
     alignItems: "center",
     justifyContent: "center",
-    top: -100,
+    flexDirection: "column",
+    top: -140,
+  },
+  emoji: {
+    fontSize: 100,
+    marginBottom: 40,
+  },
+  emotion: {
+    fontSize: 30,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

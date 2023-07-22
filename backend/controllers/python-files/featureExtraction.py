@@ -83,8 +83,8 @@ if __name__ == "__main__":
 
     # Convert the array output to the corresponding emotion label
     predicted_emotion_index = np.argmax(emotion_predictions)
-    emotion_labels = ['happy', 'sad', 'angry',
-                      'surprised', 'neutral', 'disgust', 'fear']
+    emotion_labels = ['Happy', 'Sad', 'Angry',
+                      'Surprised', 'Neutral', 'Disgust', 'Fear']
     predicted_emotion_label = emotion_labels[predicted_emotion_index]
 
     print(predicted_emotion_label)

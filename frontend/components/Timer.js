@@ -49,16 +49,10 @@ const Timer = ({ startTimer }) => {
 
 export default Timer;
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   times: {
+    fontSize: 20,
+    top: -40,
     alignItems: "center",
     justifyContent: "center",
-    fontSize: 18,
-    top: -30,
-    left: 5,
   },
 });
