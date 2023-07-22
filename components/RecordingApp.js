@@ -13,6 +13,7 @@ const RecordingApp = () => {
   const [recordingUri, setRecordingUri] = useState(null);
   const [isRecordPlaying, setIsRecordPlaying] = useState(false);
   const [emotion, setEmotion] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const startRecording = async () => {
     try {
@@ -41,6 +42,8 @@ const RecordingApp = () => {
       const uri = recording.getURI();
       setRecordingUri(uri);
       setRecording(null);
+      setEmotion("");
+      setLoading(true);
       console.log("Recording stopped. URI:", uri);
 
       const wavUri = await convertToWav(uri);
@@ -89,8 +92,16 @@ const RecordingApp = () => {
           },
         }
       );
-      setEmotion(response.data);
-      console.log(91, response.data);
+      // const arrData = response.data.split(" ");
+      const arrData = response.data.split(" ");
+      const finalEmotion = arrData[arrData.length - 1];
+
+      // Extract the emotion using regular expressions
+      const emotions = finalEmotion.match(/step\s+(\w+)/)[1];
+
+      setLoading(false);
+      setEmotion(emotions);
+      console.log(91, emotions);
     } catch (error) {
       console.log("Error uploading audio file:", error);
     }
@@ -113,7 +124,13 @@ const RecordingApp = () => {
 
   return (
     <View>
-      <Text>{emotion}</Text>
+      {emotion ? (
+        <Text style={styles.emotion}>Your Emotion is : {emotion}</Text>
+      ) : loading ? (
+        <Text style={styles.emotion}>Finding Emotion...</Text>
+      ) : (
+        <Text></Text>
+      )}
       <Timer startTimer={recording ? true : false} />
       <TouchableOpacity
         style={styles.button}
@@ -147,5 +164,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 20,
+  },
+  emotion: {
+    fontSize: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    top: -100,
   },
 });

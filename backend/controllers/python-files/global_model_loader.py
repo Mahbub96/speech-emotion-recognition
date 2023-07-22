@@ -1,3 +1,4 @@
+
 import os
 
 from keras.models import load_model
@@ -12,7 +13,6 @@ def load_trained_model():
 
     if not model_loaded:
         try:
-
             current_directory = os.path.dirname(os.path.abspath(__file__))
             model_path = os.path.join(
                 current_directory, 'trainnedModel', 'lstm_model.h5')

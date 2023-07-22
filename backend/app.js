@@ -32,6 +32,25 @@ app.use((err, req, res, next) => {
   });
 });
 
+// const pythonScriptPath = `${__dirname}/controllers/python-files/global_model_loader.py`;
+
+// const pythonProcess = spawn("python", [pythonScriptPath]);
+
+// pythonProcess.stdout.on("data", (data) => {
+//   console.log("Python script output:", data.toString());
+//   // You can send the data to the client if needed:
+//   // res.send(data.toString());
+// });
+
+// pythonProcess.stderr.on("data", (data) => {
+//   console.error("Python script error:", data.toString());
+// });
+
+// pythonProcess.on("close", (code) => {
+//   console.log(`Python script process exited with code ${code}`);
+//   // You can perform further actions here if needed.
+// });
+
 app.listen(process.env.PORT, () => {
   console.log(`successfully running on port ${process.env.PORT}`);
 });
