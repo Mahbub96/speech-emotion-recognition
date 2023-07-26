@@ -2,14 +2,16 @@ const express = require("express");
 const path = require("path");
 const morgan = require("morgan");
 const cors = require("cors");
-const { spawn, exec } = require("child_process");
 const upload = require("multer")();
 require("dotenv").config();
+const os = require("os");
 
 // internal imports
 const machineLearningRoute = require("./routers/mlRoutes");
+const cluster = require("cluster");
 
 const app = express();
+const numCpu = os.cpus().length;
 
 app.use(cors({ origin: "*" }));
 app.use(morgan("dev"));
@@ -32,25 +34,19 @@ app.use((err, req, res, next) => {
   });
 });
 
-// const pythonScriptPath = `${__dirname}/controllers/python-files/global_model_loader.py`;
+// use cluster module
+if (cluster.isMaster) {
+  for (let i = 0; i < numCpu; i++) {
+    cluster.fork();
+  }
+} else {
+  app.listen(process.env.PORT, () =>
+    console.log(
+      `app running on port ${process.env.PORT} and pid:${process.pid}`
+    )
+  );
+}
 
-// const pythonProcess = spawn("python", [pythonScriptPath]);
-
-// pythonProcess.stdout.on("data", (data) => {
-//   console.log("Python script output:", data.toString());
-//   // You can send the data to the client if needed:
-//   // res.send(data.toString());
+// app.listen(process.env.PORT, () => {
+//   console.log(`successfully running on port ${process.env.PORT}`);
 // });
-
-// pythonProcess.stderr.on("data", (data) => {
-//   console.error("Python script error:", data.toString());
-// });
-
-// pythonProcess.on("close", (code) => {
-//   console.log(`Python script process exited with code ${code}`);
-//   // You can perform further actions here if needed.
-// });
-
-app.listen(process.env.PORT, () => {
-  console.log(`successfully running on port ${process.env.PORT}`);
-});

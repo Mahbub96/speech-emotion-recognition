@@ -15,7 +15,7 @@ def load_trained_model():
         try:
             current_directory = os.path.dirname(os.path.abspath(__file__))
             model_path = os.path.join(
-                current_directory, 'trainnedModel', 'lstm_model.h5')
+                current_directory, 'trainnedModel', 'lstm_model_3.h5')
             model = load_model(model_path)
             model_loaded = True
         except Exception as e:

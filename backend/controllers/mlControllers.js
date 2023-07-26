@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const wav = require("wav");
 
-const filePaths = path.join(__dirname, "../public/sounds/", "sound.wav");
+const filePaths = path.join(__dirname, "../public/sounds/", "happy.wav");
 const scriptPath = path.join(__dirname, "/python-files/featureExtraction.py");
 
 const { WaveFile } = require("wavefile");
@@ -46,7 +46,8 @@ const featureExtraction = async (req, res, next) => {
               console.log("Error extracting feature:", err);
               res.status(500).json({ error: "Error extracting feature" });
             } else {
-              // Continue with any further processing...
+              // Continue with any further processing..
+              console.log(process.pid);
               res.send(stdout);
             }
           }
