@@ -3,13 +3,15 @@ const path = require("path");
 const fs = require("fs");
 const wav = require("wav");
 
-const filePaths = path.join(__dirname, "../public/sounds/", "happy.wav");
-const scriptPath = path.join(__dirname, "/python-files/featureExtraction.py");
-
 const { WaveFile } = require("wavefile");
 
 const featureExtraction = async (req, res, next) => {
   try {
+    // const filePaths = path.join(__dirname, "../public/sounds/", "happy.wav");
+    const scriptPath = path.join(
+      __dirname,
+      "/python-files/featureExtraction.py"
+    );
     const { recording } = req.body;
 
     const wavData = Buffer.from(recording, "base64");
